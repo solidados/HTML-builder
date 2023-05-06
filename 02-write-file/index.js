@@ -30,7 +30,7 @@ const newEntry = () => {
         }
       });
       fileText.write(`${answer}\n`, err => {
-        if (err) throw err/* stdout.write(err.message) */;
+        if (err) throw err;
         newEntry();
       })
     })
