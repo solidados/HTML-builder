@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { stdout } = process;
 
-const folderContent = () => {
+const getFolderContent = () => {
   const folderPath = path.join(__dirname, 'secret-folder');
 
   fs.readdir(folderPath, (err, files) => {
@@ -22,4 +22,4 @@ const folderContent = () => {
     })
   });
 };
-folderContent();
+getFolderContent();
