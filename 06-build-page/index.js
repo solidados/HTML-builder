@@ -1,59 +1,60 @@
-// ! --- 01:57am Please give me some more time. and check again before deadline. Thank you!
-
 const fs = require('node:fs');
 const path = require('node:path');
 const fsPromises = require('fs/promises');
+const { log } = require('node:console');
 
-const destBuild = path.join(__dirname, 'project-dist');
-const destAssets = path.join(destBuild, 'assets');
-const srcAssets = path.join(__dirname, 'assets');
+const DEST_BUILD = path.join(__dirname, 'project-dist');
+const DEST_ASSETS = path.join(DEST_BUILD, 'assets');
+const SRC_ASSETS = path.join(__dirname, 'assets');
 
-const buildLayout = path.join(buildFolder, 'index.html');
-const buildStyles = path.join(buildFolder, 'style.css');
 
-const srcComponents = path.join(__dirname, 'components');
-const srcStyles = path.join(__dirname, 'styles');
+// const BLD_LAYOUT = path.join(buildFolder, 'index.html');
+// const BLD_STYLES = path.join(buildFolder, 'style.css');
+
+// const SRC_COMPONENTS = path.join(__dirname, 'components');
+// const SRC_STYLES = path.join(__dirname, 'styles');
 
 const createDist = async () => {
-  await fsPromises.rm(path.resolve(destBuild), { recursive: true, force: true });
+  await fsPromises.rm(path.resolve(DEST_BUILD), { recursive: true, force: true });
 };
 
 const createAssets = async () => {
   try {
-    await fsPromises.mkdir(destAssets, { recursive: true });
+    await fsPromises.mkdir(DEST_ASSETS, { recursive: true, force: true });
   } catch (error) {
     console.error(error);
   }
 };
 
-const copyAssets = async (srcAssets, srcAssets) => {
-  const folderContent = await fsPromises.readdir(srcAssets);
-  for (const item of folderContent) {
-    
-    if (item.isDirectory()) {
-      copyAssets();
-    }
-  }
-  /* fsPromises.readdir((srcAssets, { withFileTypes: true }), (_, files) => {
+const copyAssets = async () => {
+  fsPromises.readdir(SRC_ASSETS, { withFileTypes: true }).then(files => {
     for (const file of files) {
-      const srcFile = path.join(srcAssets, file);
-      const destFile = path.join(destAssets, file);
-
+      const srcFilePath = path.join(SRC_ASSETS, file.name);
+      const destFilePath = path.join(DEST_ASSETS, file.name);
+      
       if (file.isFile()) {
-        fsPromises.copyFile(srcFile, destFile)
-      } else {
-        console.log('Something went wrong');
-        // fsPromises.readdir((srcFile, { withFileTypes: true }), () => {})
+        fsPromises.copyFile(srcFilePath, destFilePath);
+      }
+      else {
+        fsPromises.readdir(srcFilePath, { withFileTypes: true }).then(destination => {
+          fsPromises.mkdir(path.join(DEST_ASSETS, file.name), { recursive: true });
+
+          for (const item of destination) {
+            const cpFrom = path.join(srcFilePath, item.name);
+            const cpTo = path.join(destFilePath, item.name);
+            fsPromises.copyFile(cpFrom, cpTo);
+          }
+        });
       }
     }
-  }) */
-}
+  });
+};
 
 createDist();
 createAssets();
 copyAssets();
 
-/* fs.readdir(srcAssets, (_, files) => {
+/* fs.readdir(SRC_ASSETS, (_, files) => {
   for (const file of files) {
     console.log(file);
     fs.readFile(file, () => {
@@ -68,14 +69,14 @@ copyAssets();
   const files = await readdir(src);
 
   for (const file of files) {
-    const srcPath = join(src, file);
+    const destination = join(src, file);
     const destPath = join(dest, file);
-    const itemStat = await stat(srcPath);
+    const itemStat = await stat(destination);
 
     if (itemStat.isDirectory()) {
-      await copyFolder(srcPath, destPath);
+      await copyFolder(destination, destPath);
     } else {
-      await copyFile(srcPath, destPath);
+      await copyFile(destination, destPath);
     }
   }
 } */
