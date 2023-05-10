@@ -16,13 +16,9 @@ const SRC_COMPONENTS = path.join(__dirname, 'components');
 const BLD_COMPONENTS = path.join(DEST_BUILD, 'index.html');
 
 
-const createBuild = async () => {
-  await fsPromises.rm(path.resolve(DEST_BUILD), { recursive: true, force: true });
-};
-
 const createAssets = async () => {
   try {
-    await fsPromises.mkdir(BLD_ASSETS, { recursive: true, force: true });
+    await fsPromises.mkdir(BLD_ASSETS, { recursive: true });
   } catch (error) {
     console.error(error);
   }
@@ -89,11 +85,10 @@ const combineStyles = async () => {
   });
 };
 
-const appBuild = async () => {
-  createBuild();
+const builderApp = () => {
   createAssets();
   copyAssets();
   combineHtml();
   combineStyles();
 };
-appBuild();
+builderApp();
